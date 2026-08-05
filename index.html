@@ -3,17 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Overwatch - Counter Picker 2026</title>
+  <title>Overwatch 2 - Counter Picker Pro</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --bg-dark: #121822;
-      --card-bg: #1e2736;
+      --bg-dark: #0b0f19;
+      --card-bg: #151b2b;
       --accent-orange: #f99e1a;
       --text-main: #f0f4f8;
       --text-muted: #9aa8b9;
-      --tank-color: #3b82f6; 
-      --dps-color: #ef4444; 
-      --support-color: #10b981; 
+      --tank-color: #3b82f6;
+      --dps-color: #ef4444;
+      --support-color: #10b981;
       --border-radius: 12px;
     }
 
@@ -21,602 +22,313 @@
     body { background-color: var(--bg-dark); color: var(--text-main); padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
 
     header { text-align: center; margin-bottom: 20px; }
-    header h1 { font-size: 2.5rem; text-transform: uppercase; font-style: italic; font-weight: 800; letter-spacing: -1px; }
+    header h1 { font-size: 2.5rem; text-transform: uppercase; font-style: italic; font-weight: 900; letter-spacing: -1px; }
     header span { color: var(--accent-orange); }
-    header p { color: var(--text-muted); font-size: 1.1rem; }
+    header p { color: var(--text-muted); font-size: 1.1rem; margin-top: 5px; }
 
-    .app-container { width: 100%; max-width: 1200px; display: flex; flex-direction: column; gap: 30px; }
+    .app-container { width: 100%; max-width: 1250px; display: flex; flex-direction: column; gap: 30px; }
 
-    .dashboard { display: grid; grid-template-columns: 300px 1fr; gap: 20px; }
-    @media (max-width: 900px) { .dashboard { grid-template-columns: 1fr; } }
+    .dashboard { display: grid; grid-template-columns: 320px 1fr; gap: 20px; }
+    @media (max-width: 950px) { .dashboard { grid-template-columns: 1fr; } }
 
     .selected-hero-card {
       background: var(--card-bg); border-radius: var(--border-radius); padding: 30px 20px;
-      text-align: center; border: 1px solid #2d3848; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3); position: sticky; top: 20px;
+      text-align: center; border: 1px solid #2d3848; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
     }
-    .selected-hero-card .hero-portrait {
-      width: 130px; height: 130px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      font-size: 3.5rem; font-weight: bold; background: #2d3848; border: 4px solid var(--accent-orange); margin-bottom: 20px;
-      text-transform: uppercase; color: #fff; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+    
+    .hero-portrait {
+      width: 140px; height: 140px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 3rem; font-weight: bold; background: #2d3848; border: 4px solid var(--accent-orange); margin-bottom: 15px;
+      text-transform: uppercase; overflow: hidden; background-size: cover; background-position: center;
     }
-    .selected-hero-card h2 { font-size: 2.2rem; margin-bottom: 10px; font-style: italic; text-transform: uppercase; line-height: 1.1; }
-    .hero-role-badge { display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; text-transform: uppercase; background: #2a3546; letter-spacing: 1px;}
+    
+    .selected-hero-card h2 { font-size: 2rem; margin-bottom: 10px; font-style: italic; text-transform: uppercase; }
+    .hero-role-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; text-transform: uppercase; background: #2a3546; letter-spacing: 1px; margin-bottom: 20px;}
     .role-tank { color: var(--tank-color); }
     .role-damage { color: var(--dps-color); }
     .role-support { color: var(--support-color); }
 
-    .counters-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: start;}
+    .hero-stats-container { width: 100%; background: #0f1422; border-radius: 8px; padding: 15px; border: 1px solid #2d3848; margin-bottom: 20px; }
+    .hp-bar-wrapper { width: 100%; height: 24px; background: #2d3848; border-radius: 12px; display: flex; overflow: hidden; margin-bottom: 10px; }
+    .bar-hp { background: #10b981; height: 100%; }
+    .bar-armor { background: #f59e0b; height: 100%; }
+    .bar-shield { background: #3b82f6; height: 100%; }
+    
+    .stats-text { display: flex; justify-content: center; gap: 15px; font-size: 0.85rem; font-weight: bold; }
+    .stats-text span { display: flex; align-items: center; gap: 5px; }
+
+    .perks-container { display: flex; gap: 10px; width: 100%; }
+    .perk-box { flex: 1; background: #0f1422; border: 1px solid #2d3848; border-radius: 8px; padding: 12px 5px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 5px; }
+    .perk-minor { border-top: 3px solid #a78bfa; }
+    .perk-major { border-top: 3px solid #fbbf24; }
+    .perk-title { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: bold; }
+    .perk-name { font-size: 0.8rem; font-weight: bold; color: var(--text-main); }
+
+    .tabs-container { margin-bottom: 15px; display: flex; gap: 10px; border-bottom: 2px solid #2d3848; padding-bottom: 10px; justify-content: center;}
+    .tab-btn { background: none; border: none; color: var(--text-muted); font-size: 1rem; font-weight: bold; cursor: pointer; padding: 8px 12px; border-radius: 6px; transition: all 0.2s; display: flex; align-items: center; gap: 8px;}
+    .tab-btn:hover { background: #2a3546; color: #fff; }
+    .tab-btn.active { background: #2a3546; color: var(--accent-orange); }
+
+    .counters-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
     @media (max-width: 768px) { .counters-grid { grid-template-columns: 1fr; } }
 
-    .role-column { background: var(--card-bg); border-radius: var(--border-radius); padding: 20px; border: 1px solid #2d3848; display: flex; flex-direction: column; gap: 15px; }
-    .role-title { font-size: 1.2rem; padding-bottom: 15px; border-bottom: 2px solid #2d3848; display: flex; align-items: center; gap: 8px; text-transform: uppercase; font-style: italic; }
+    .role-column { background: var(--card-bg); border-radius: var(--border-radius); padding: 20px; border: 1px solid #2d3848; display: flex; flex-direction: column; gap: 12px; }
+    .role-title { font-size: 1.1rem; padding-bottom: 12px; border-bottom: 2px solid #2d3848; display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; font-style: italic; font-weight: bold;}
     .role-title.tank { color: var(--tank-color); border-color: var(--tank-color); }
     .role-title.dps { color: var(--dps-color); border-color: var(--dps-color); }
     .role-title.support { color: var(--support-color); border-color: var(--support-color); }
 
-    .counter-item { background: #141a24; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; gap: 8px; border-left: 4px solid transparent; transition: transform 0.2s; }
-    .counter-item:hover { transform: translateX(5px); }
+    .counter-item { background: #0f1422; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; border-left: 4px solid transparent; cursor: pointer; transition: transform 0.2s; }
+    .counter-item:hover { transform: scale(1.02); background: #1a2235; }
     .counter-item.hard { border-left-color: #ef4444; }
     .counter-item.soft { border-left-color: #f59e0b; }
-    .counter-header { display: flex; align-items: center; justify-content: space-between; }
-    .counter-name { font-weight: 700; font-size: 1.1rem; }
-    .counter-badge { font-size: 0.7rem; padding: 3px 8px; border-radius: 12px; font-weight: bold; text-transform: uppercase; }
+    .counter-header { display: flex; align-items: center; gap: 10px; }
+    .mini-avatar { width: 36px; height: 36px; border-radius: 6px; background-size: cover; background-position: center; background-color: #2d3848; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; }
+    .counter-name { font-weight: 700; font-size: 1rem; flex-grow: 1;}
+    .counter-badge { font-size: 0.65rem; padding: 3px 8px; border-radius: 12px; font-weight: bold; text-transform: uppercase; }
     .badge-hard { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
     .badge-soft { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
-    .counter-reason { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; }
+    .counter-reason { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; margin-top: 4px;}
 
-    .roster-section { background: var(--card-bg); border-radius: var(--border-radius); padding: 25px; border: 1px solid #2d3848; margin-top: 10px; }
-    .roster-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
-    .roster-header h3 { font-size: 1.5rem; text-transform: uppercase; font-style: italic; }
+    .roster-section { background: var(--card-bg); border-radius: var(--border-radius); padding: 30px; border: 1px solid #2d3848; margin-top: 10px; }
+    .roster-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px; }
+    .roster-header h3 { font-size: 1.5rem; text-transform: uppercase; font-style: italic; display: flex; align-items: center; gap: 10px;}
     
-    .search-input {
-      padding: 12px 20px; border-radius: 20px; border: 1px solid #3d4a5d; background: #121822; color: #fff; font-size: 1rem; outline: none; width: 100%; max-width: 350px; transition: all 0.3s;
+    .search-input { padding: 12px 20px; border-radius: 20px; border: 1px solid #3d4a5d; background: #0b0f19; color: #fff; font-size: 1rem; outline: none; width: 100%; max-width: 300px; transition: border-color 0.2s;}
+    .search-input:focus { border-color: var(--accent-orange); }
+
+    /* Estructura de 3 columnas para el Roster */
+    .roster-columns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; text-align: center; }
+    @media (max-width: 900px) { .roster-columns { grid-template-columns: 1fr; gap: 40px; } }
+
+    .role-group h4 { margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 1.2rem; text-transform: uppercase; font-style: italic; }
+    .hero-grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+    
+    /* Botones visuales solo foto */
+    .hero-btn { background: #2a3546; border: 3px solid transparent; border-radius: 12px; width: 65px; height: 65px; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1rem;}
+    .hero-btn:hover { border-color: #9aa8b9; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+    .hero-btn.active { border-color: var(--accent-orange); box-shadow: 0 0 15px rgba(249, 158, 26, 0.4); }
+    
+    /* Tooltip al pasar el ratón */
+    .hero-btn::after {
+      content: attr(data-name); position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%);
+      background: rgba(0,0,0,0.9); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem;
+      white-space: nowrap; opacity: 0; transition: all 0.2s; pointer-events: none; z-index: 10;
     }
-    .search-input:focus { border-color: var(--accent-orange); box-shadow: 0 0 10px rgba(249, 158, 26, 0.2); }
+    .hero-btn:hover::after { bottom: 5px; opacity: 1; }
 
-    .role-group { margin-bottom: 25px; }
-    .role-group h4 { margin-bottom: 15px; display: flex; align-items: center; gap: 8px; font-size: 1.2rem; color: var(--text-muted); text-transform: uppercase; font-style: italic;}
-    .hero-grid { display: flex; flex-wrap: wrap; gap: 10px; }
-    
-    .hero-btn {
-      background: #2a3546; border: 2px solid transparent; border-radius: 12px; padding: 0; cursor: pointer;
-      transition: all 0.2s; display: flex; align-items: center; justify-content: center; width: 70px; height: 70px; overflow: hidden;
-    }
-    .hero-btn:hover { transform: translateY(-4px) scale(1.05); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-    .hero-btn.active { border-color: var(--accent-orange); box-shadow: 0 0 15px rgba(249, 158, 26, 0.5); }
-
-    /* NUEVOS ESTILOS: TOGGLES, TABS, STATS Y ANALIZADOR */
-    .mode-toggle { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
-    .toggle-btn { background: var(--card-bg); border: 2px solid #2d3848; color: var(--text-muted); padding: 12px 25px; border-radius: 30px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 1rem; }
-    .toggle-btn.active { background: var(--accent-orange); color: #121822; border-color: var(--accent-orange); box-shadow: 0 0 20px rgba(249,158,26,0.3); }
-
-    .tabs-container { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; flex-wrap: wrap; border-bottom: 2px solid #2d3848; padding-bottom: 10px;}
-    .tab-btn { background: transparent; border: none; color: var(--text-muted); font-size: 1.1rem; font-weight: bold; cursor: pointer; padding: 10px 20px; border-radius: 8px; transition: 0.2s; text-transform: uppercase; }
-    .tab-btn:hover { background: rgba(255,255,255,0.05); }
-    .tab-btn.active { color: var(--accent-orange); background: rgba(249,158,26,0.1); }
-
-    .stats-container { width: 100%; margin-top: 20px; padding-top: 15px; border-top: 1px solid #2d3848; }
-    .stats-bar-bg { width: 100%; height: 14px; background: #141a24; border-radius: 8px; display: flex; overflow: hidden; margin-bottom: 10px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5); }
-    .stat-fill { height: 100%; transition: width 0.5s ease-in-out; }
-    .stat-fill.hp { background: linear-gradient(90deg, #059669, #10b981); }
-    .stat-fill.armor { background: linear-gradient(90deg, #d97706, #f59e0b); }
-    .stat-fill.shield { background: linear-gradient(90deg, #2563eb, #3b82f6); }
-    .stats-text { font-size: 0.85rem; color: var(--text-muted); font-weight: bold; letter-spacing: 1px; display: flex; justify-content: space-between; }
-    .stats-text span { display: flex; align-items: center; gap: 4px; }
-
-    .analyzer-ui { background: var(--card-bg); border-radius: var(--border-radius); padding: 30px; border: 1px solid #2d3848; text-align: center; }
-    .analyzer-ui h2 { font-size: 2rem; margin-bottom: 10px; font-style: italic; text-transform: uppercase; color: var(--accent-orange); }
-    .enemy-slots { display: flex; justify-content: center; gap: 15px; margin: 25px 0; flex-wrap: wrap; }
-    .enemy-slot { width: 80px; height: 80px; border-radius: 50%; background: #141a24; border: 2px dashed #3d4a5d; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #3d4a5d; cursor: pointer; position: relative; overflow: hidden; transition: 0.2s; }
-    .enemy-slot img { width: 100%; height: 100%; object-fit: cover; }
-    .enemy-slot:hover { border-color: #ef4444; background: rgba(239, 68, 68, 0.1); }
-    .enemy-slot:hover::after { content: '❌'; position: absolute; font-size: 1.2rem; }
-    
-    .recommendations-panel { margin-top: 30px; text-align: left; border-top: 2px solid #2d3848; padding-top: 20px; }
-    .recom-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px; }
-    @media (max-width: 768px) { .recom-grid { grid-template-columns: 1fr; } }
-    .recom-card { background: #141a24; padding: 15px; border-radius: 8px; display: flex; align-items: center; gap: 15px; border: 1px solid #2d3848; }
-    .recom-card img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--text-muted); }
-    .recom-card h4 { font-size: 1.1rem; margin-bottom: 2px; }
-    .recom-card p { font-size: 0.8rem; color: var(--text-muted); }
-    .recom-pts { background: var(--accent-orange); color: #000; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 0.75rem; margin-left: auto; }
+    .empty-state { color: var(--text-muted); font-size: 0.9rem; text-align: center; padding: 20px 0; }
   </style>
 </head>
 <body>
 
   <header>
     <h1>Overwatch <span>Counters</span></h1>
-    <p>Selecciona tu objetivo y descubre cómo neutralizarlo</p>
+    <p>Selecciona tu objetivo y domina la partida</p>
   </header>
 
   <div class="app-container">
     
-    <!-- SELECTOR DE MODOS -->
-    <div class="mode-toggle">
-      <button id="btnModeIndividual" class="toggle-btn active" onclick="setMode('individual')">👤 Héroe Individual</button>
-      <button id="btnModeAnalyzer" class="toggle-btn" onclick="setMode('analyzer')">🧠 Analizador de Equipo</button>
-    </div>
-
-    <!-- MODO INDIVIDUAL (DASHBOARD) -->
-    <div id="individualDashboard" class="dashboard">
+    <div class="dashboard">
+      <!-- Ficha del Héroe Izquierda -->
       <div class="selected-hero-card">
-        <div id="targetImg" class="hero-portrait">?</div>
+        <div id="targetImg" class="hero-portrait"></div>
         <h2 id="targetName">Selecciona</h2>
         <span id="targetRole" class="hero-role-badge">-</span>
-        
-        <!-- Detalles Técnicos Rápidos (Stats) -->
-        <div class="stats-container">
-          <div class="stats-bar-bg" id="statsBar">
-            <div class="stat-fill hp" id="barHp" style="width: 0%"></div>
-            <div class="stat-fill armor" id="barArmor" style="width: 0%"></div>
-            <div class="stat-fill shield" id="barShield" style="width: 0%"></div>
+
+        <!-- Stats y Perks -->
+        <div class="hero-stats-container">
+          <div class="hp-bar-wrapper">
+            <div id="barHp" class="bar-hp" style="width: 50%;"></div>
+            <div id="barArmor" class="bar-armor" style="width: 30%;"></div>
+            <div id="barShield" class="bar-shield" style="width: 20%;"></div>
           </div>
           <div class="stats-text">
-            <span style="color: #10b981;">❤ <span id="txtHp">0</span></span>
-            <span style="color: #f59e0b;">🛡️ <span id="txtArmor">0</span></span>
-            <span style="color: #3b82f6;">💠 <span id="txtShield">0</span></span>
+            <span style="color: #10b981;"><i class="fa-solid fa-heart"></i> <span id="txtHp">0</span></span>
+            <span style="color: #f59e0b;"><i class="fa-solid fa-shield"></i> <span id="txtArmor">0</span></span>
+            <span style="color: #3b82f6;"><i class="fa-solid fa-shield-halved"></i> <span id="txtShield">0</span></span>
+          </div>
+        </div>
+
+        <div class="perks-container" id="perksContainer">
+          <div class="perk-box perk-minor">
+            <span class="perk-title">Minor Perk</span>
+            <i class="fa-solid fa-feather"></i>
+            <span class="perk-name" id="txtMinorPerk">Por definir</span>
+          </div>
+          <div class="perk-box perk-major">
+            <span class="perk-title">Major Perk</span>
+            <i class="fa-solid fa-star"></i>
+            <span class="perk-name" id="txtMajorPerk">Por definir</span>
           </div>
         </div>
       </div>
 
+      <!-- Panel Derecho: Pestañas y Resultados -->
       <div>
         <div class="tabs-container">
-          <button id="tabCounters" class="tab-btn active" onclick="setTab('counters')">🚨 Me hacen Counter</button>
-          <button id="tabStrong" class="tab-btn" onclick="setTab('strong')">⚔️ Fuerte contra</button>
-          <button id="tabSynergies" class="tab-btn" onclick="setTab('synergies')">🤝 Sinergias (Aliados)</button>
+          <button class="tab-btn active" onclick="setTab('counters')" id="tab-counters">
+            <i class="fa-solid fa-skull-crossbones"></i> Le hacen counter
+          </button>
+          <button class="tab-btn" onclick="setTab('strong')" id="tab-strong">
+            <i class="fa-solid fa-fire"></i> Fuerte contra
+          </button>
+          <button class="tab-btn" onclick="setTab('synergy')" id="tab-synergy">
+            <i class="fa-solid fa-handshake"></i> Sinergias
+          </button>
         </div>
-        
+
         <div class="counters-grid">
           <div class="role-column">
-            <div class="role-title tank">🛡️ Tanques</div>
-            <div id="tankCounters"></div>
+            <div class="role-title tank"><i class="fa-solid fa-shield-halved"></i> Tanques</div>
+            <div id="tankCol"></div>
           </div>
           <div class="role-column">
-            <div class="role-title dps">⚔️ Daño</div>
-            <div id="dpsCounters"></div>
+            <div class="role-title dps"><i class="fa-solid fa-crosshairs"></i> Daño</div>
+            <div id="dpsCol"></div>
           </div>
           <div class="role-column">
-            <div class="role-title support">🌿 Apoyo</div>
-            <div id="supportCounters"></div>
+            <div class="role-title support"><i class="fa-solid fa-heart-pulse"></i> Apoyo</div>
+            <div id="supportCol"></div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- MODO ANALIZADOR DE EQUIPO -->
-    <div id="analyzerDashboard" class="analyzer-ui" style="display: none;">
-      <h2>Analizador de Equipo Rival</h2>
-      <p style="color: var(--text-muted);">Selecciona hasta 5 héroes en el roster inferior para ver la mejor composición de respuesta.</p>
-      
-      <div class="enemy-slots" id="enemySlotsContainer">
-        <!-- Generado por JS -->
-      </div>
-
-      <div class="recommendations-panel" id="recommendationsPanel">
-        <h3 style="margin-bottom: 15px; color: var(--text-main);">🎯 Composición Recomendada</h3>
-        <div id="recomContent">
-          <p style="color: var(--text-muted); text-align: center; padding: 20px;">Añade enemigos arriba para calcular la mejor estrategia.</p>
-        </div>
-      </div>
-    </div>
-
+    <!-- Roster en 3 Columnas Centradas -->
     <div class="roster-section">
       <div class="roster-header">
-        <h3>Roster Completo (52 Héroes)</h3>
+        <h3><i class="fa-solid fa-users"></i> Roster Completo</h3>
         <input type="text" id="searchInput" class="search-input" placeholder="Buscar héroe..." oninput="filterHeroes()">
       </div>
       
-      <div class="role-group">
-        <h4 style="color: var(--tank-color);">🛡️ Tanques</h4>
-        <div class="hero-grid" id="rosterTank"></div>
-      </div>
-      <div class="role-group">
-        <h4 style="color: var(--dps-color);">⚔️ Daño</h4>
-        <div class="hero-grid" id="rosterDamage"></div>
-      </div>
-      <div class="role-group">
-        <h4 style="color: var(--support-color);">🌿 Apoyo</h4>
-        <div class="hero-grid" id="rosterSupport"></div>
+      <div class="roster-columns">
+        <div class="role-group">
+          <h4 style="color: var(--tank-color);"><i class="fa-solid fa-shield-halved"></i> Tanques</h4>
+          <div class="hero-grid" id="rosterTank"></div>
+        </div>
+        <div class="role-group">
+          <h4 style="color: var(--dps-color);"><i class="fa-solid fa-crosshairs"></i> Daño</h4>
+          <div class="hero-grid" id="rosterDamage"></div>
+        </div>
+        <div class="role-group">
+          <h4 style="color: var(--support-color);"><i class="fa-solid fa-heart-pulse"></i> Apoyo</h4>
+          <div class="hero-grid" id="rosterSupport"></div>
+        </div>
       </div>
     </div>
+
   </div>
 
   <script>
+    let apiImages = {};
+    let activeTab = 'counters';
+    let selectedHeroKey = "D.Va"; // Héroe por defecto
+    
+    // BASE DE DATOS COMPLETA (52 Héroes con Domina en Tanque)
     const HEROES_DB = {
-      // ================= TANQUES (14) =================
-      "D.Va": { role: "Tank", counters: [
-        { name: "Zarya", role: "tank", type: "hard", reason: "Su rayo atraviesa la Matriz de Defensa." },
-        { name: "Winston", role: "tank", type: "soft", reason: "El tesla ignora la Matriz y puede perseguirla fácilmente." },
-        { name: "Symmetra", role: "damage", type: "hard", reason: "Rayo atraviesa la Matriz y recarga su munición con el meca." }
-      ]},
-      "Domina": { role: "Tank", counters: [
-        { name: "Sombra", role: "damage", type: "hard", reason: "El PEM limpia todas las preparaciones y trampas que Domina establece." },
-        { name: "Pharah", role: "damage", type: "hard", reason: "Puede atacar desde el cielo, ignorando por completo el control espacial terrestre de Domina." },
-        { name: "Winston", role: "tank", type: "soft", reason: "Su salto le permite ignorar las zonas preparadas por Domina y atacar directamente la retaguardia." }
-      ]},
-      "Doomfist": { role: "Tank", counters: [
-        { name: "Orisa", role: "tank", type: "hard", reason: "Jabalina y Fortificación anulan completamente la movilidad de Doomfist." },
-        { name: "Sombra", role: "damage", type: "hard", reason: "El hackeo apaga su movilidad dejándolo como un objetivo gigante." },
-        { name: "Ana", role: "support", type: "hard", reason: "Dardo fácil de acertar mientras bloquea o carga el puño." }
-      ]},
-      "Hazard": { role: "Tank", counters: [
-        { name: "Mauga", role: "tank", type: "hard", reason: "El daño masivo a corta distancia de Mauga derrite a Hazard sin problemas." },
-        { name: "Reaper", role: "damage", type: "hard", reason: "Gran hitbox que Reaper devora con sus escopetas a melé." },
-        { name: "Ana", role: "support", type: "hard", reason: "La granada biótica impide su supervivencia cuerpo a cuerpo." }
-      ]},
-      "Junker Queen": { role: "Tank", counters: [
-        { name: "Zarya", role: "tank", type: "hard", reason: "Las burbujas limpian el daño por sangrado, cortando su auto-sanación." },
-        { name: "Kiriko", role: "support", type: "hard", reason: "Suzu de Protección anula completamente su definitiva (Rampage)." },
-        { name: "Widowmaker", role: "damage", type: "hard", reason: "JQ carece de escudos, siendo blanco fácil a larga distancia." }
-      ]},
-      "Mauga": { role: "Tank", counters: [
-        { name: "Sigma", role: "tank", type: "hard", reason: "Agarre cinético y escudo mitigan su daño masivo y evitan que se cure." },
-        { name: "Ana", role: "support", type: "hard", reason: "Sin su curación constante por daño (por culpa de la granada biótica), Mauga cae rápido." },
-        { name: "D.Va", role: "tank", type: "soft", reason: "La matriz de defensa absorbe la ventana donde Mauga intenta curarse disparando." }
-      ]},
-      "Orisa": { role: "Tank", counters: [
-        { name: "Zarya", role: "tank", type: "hard", reason: "El rayo de Zarya ignora por completo el Giro de Jabalina." },
-        { name: "Zenyatta", role: "support", type: "hard", reason: "El Orbe de Discordia castiga su escasa movilidad y la destruye rápido." },
-        { name: "Winston", role: "tank", type: "soft", reason: "Ignora a Orisa por completo saltando directamente a su backline." }
-      ]},
-      "Ramattra": { role: "Tank", counters: [
-        { name: "Orisa", role: "tank", type: "soft", reason: "Puede mantener a raya el modo Némesis con su jabalina y fortificación." },
-        { name: "Reaper", role: "damage", type: "hard", reason: "Derrite a Ramattra en su enorme Forma Némesis a corta distancia." },
-        { name: "Ana", role: "support", type: "hard", reason: "Dardo y granada arruinan la agresividad y sustain de su definitiva." }
-      ]},
-      "Reinhardt": { role: "Tank", counters: [
-        { name: "Ramattra", role: "tank", type: "hard", reason: "Los puñetazos de la forma Némesis atraviesan libremente el escudo de Reinhardt." },
-        { name: "Bastion", role: "damage", type: "hard", reason: "Su forma asalto rompe el escudo masivo de Rein en escasos segundos." },
-        { name: "Pharah", role: "damage", type: "soft", reason: "Ataca desde posiciones altas a las que el martillo de Reinhardt jamás llegará." }
-      ]},
-      "Roadhog": { role: "Tank", counters: [
-        { name: "Mauga", role: "tank", type: "hard", reason: "El hitbox de Roadhog es una batería de curación infinita para Mauga." },
-        { name: "Ana", role: "support", type: "hard", reason: "Una granada biótica bloquea su 'Inhalador' y lo deja sentenciado." },
-        { name: "Reaper", role: "damage", type: "hard", reason: "Lo despelleja a escopetazos y puede esquivar el gancho con Forma Espectral." }
-      ]},
-      "Sigma": { role: "Tank", counters: [
-        { name: "Winston", role: "tank", type: "hard", reason: "El Cañón Tesla atraviesa el escudo de Sigma y su Agarre Cinético." },
-        { name: "Symmetra", role: "damage", type: "hard", reason: "El rayo gana munición y daño con su escudo, y atraviesa el Agarre." },
-        { name: "Moira", role: "support", type: "soft", reason: "El daño biótico y los orbes de Moira no pueden ser absorbidos." }
-      ]},
-      "Winston": { role: "Tank", counters: [
-        { name: "Reaper", role: "damage", type: "hard", reason: "Reaper liquida a Winston en cuanto este salta hacia él." },
-        { name: "Bastion", role: "damage", type: "hard", reason: "La torreta destruye instantáneamente la burbuja protectora del mono." },
-        { name: "Brigitte", role: "support", type: "soft", reason: "Lo empuja lejos en el aire cuando intenta hacer la iniciación con salto." }
-      ]},
-      "Wrecking Ball": { role: "Tank", counters: [
-        { name: "Sombra", role: "damage", type: "hard", reason: "El hackeo fuerza a Ball a salir de su forma de bola, dejándolo clavado en el sitio." },
-        { name: "Roadhog", role: "tank", type: "hard", reason: "El gancho detiene bruscamente todo su impulso e inercia." },
-        { name: "Mei", role: "damage", type: "hard", reason: "El spray endodérmico lo frena y evita que alcance la velocidad para hacer daño." }
-      ]},
-      "Zarya": { role: "Tank", counters: [
-        { name: "Reinhardt", role: "tank", type: "soft", reason: "El escudo masivo le corta la línea de visión al rayo e impide que su equipo le cargue energía." },
-        { name: "Widowmaker", role: "damage", type: "hard", reason: "La mata de un tiro lejano sin darle margen a reaccionar y activar su burbuja." },
-        { name: "Lifeweaver", role: "support", type: "soft", reason: "Con una Plataforma Pétalo bien lanzada puede elevar al equipo y salvarlos del Pozo Gravitatorio." }
-      ]},
+      // ===== TANQUES (14) =====
+      "D.Va": { 
+        role: "Tank", 
+        stats: { hp: 350, armor: 300, shield: 0 },
+        counters: [
+          { name: "Zarya", role: "tank", type: "hard", reason: "Su rayo atraviesa la Matriz de Defensa." },
+          { name: "Winston", role: "tank", type: "soft", reason: "El tesla ignora la Matriz." },
+          { name: "Symmetra", role: "damage", type: "hard", reason: "Su rayo ignora la matriz y se carga rápido." }
+        ]
+      },
+      "Doomfist": { role: "Tank", counters: [ { name: "Sombra", role: "damage", type: "hard", reason: "Hackeo anula su movilidad." }, { name: "Ana", role: "support", type: "hard", reason: "Dardo fácil mientras bloquea." } ] },
+      "Domina": { role: "Tank", counters: [ { name: "Tracer", role: "damage", type: "hard", reason: "Puede esquivar sus ataques pesados." }, { name: "Ana", role: "support", type: "hard", reason: "Granada anula su curación pasiva." } ] },
+      "Hazard": { role: "Tank", counters: [ { name: "Mauga", role: "tank", type: "hard", reason: "Daño masivo a corta distancia." } ] },
+      "Junker Queen": { role: "Tank", counters: [ { name: "Kiriko", role: "support", type: "hard", reason: "Suzu limpia sangrados y ulti." }, { name: "Widowmaker", role: "damage", type: "hard", reason: "Sin defensa a distancia." } ] },
+      "Mauga": { role: "Tank", counters: [ { name: "Sigma", role: "tank", type: "hard", reason: "Absorbe su daño y anula curación." }, { name: "Ana", role: "support", type: "hard", reason: "Granada lo sentencia." } ] },
+      "Orisa": { role: "Tank", counters: [ { name: "Zarya", role: "tank", type: "hard", reason: "Rayo ignora jabalina." }, { name: "Zenyatta", role: "support", type: "hard", reason: "Discordia la castiga mucho." } ] },
+      "Ramattra": { role: "Tank", counters: [ { name: "Reaper", role: "damage", type: "hard", reason: "Gran daño contra forma Némesis." }, { name: "Ana", role: "support", type: "hard", reason: "Dardo arruina su avance." } ] },
+      "Reinhardt": { role: "Tank", counters: [ { name: "Bastion", role: "damage", type: "hard", reason: "Modo torreta destruye el escudo." }, { name: "Ramattra", role: "tank", type: "hard", reason: "Puños atraviesan escudo." } ] },
+      "Roadhog": { role: "Tank", counters: [ { name: "Ana", role: "support", type: "hard", reason: "Granada arruina su cura personal." }, { name: "Mauga", role: "tank", type: "hard", reason: "Se cura disparándole a él." } ] },
+      "Sigma": { role: "Tank", counters: [ { name: "Winston", role: "tank", type: "hard", reason: "Tesla ignora escudo y agarre." }, { name: "Symmetra", role: "damage", type: "hard", reason: "Rayo se alimenta del escudo." } ] },
+      "Winston": { role: "Tank", counters: [ { name: "Reaper", role: "damage", type: "hard", reason: "Lo derrite cuando salta." }, { name: "Bastion", role: "damage", type: "hard", reason: "Destruye burbuja y a él." } ] },
+      "Wrecking Ball": { role: "Tank", counters: [ { name: "Sombra", role: "damage", type: "hard", reason: "Hackeo frena su inercia en seco." }, { name: "Mei", role: "damage", type: "soft", reason: "Lo ralentiza enormemente." } ] },
+      "Zarya": { role: "Tank", counters: [ { name: "Widowmaker", role: "damage", type: "hard", reason: "Un tiro lejano, no hay burbuja a tiempo." } ] },
 
-      "Ashe": { role: "Damage", counters: [
-        { name: "Widowmaker", role: "damage", type: "hard", reason: "La domina superándola ampliamente en daño por tiro y rango." },
-        { name: "Winston", role: "tank", type: "hard", reason: "Puede saltarle repetidas veces y Ashe no tiene movilidad rápida para escapar." },
-        { name: "Genji", role: "damage", type: "soft", reason: "Le devuelve la dinamita y se pega a ella con sus dashes." }
-      ]},
-      "Bastion": { role: "Damage", counters: [
-        { name: "Sigma", role: "tank", type: "hard", reason: "Su Agarre Cinético transforma toda la ráfaga de ametralladora en escudos temporales." },
-        { name: "Genji", role: "damage", type: "hard", reason: "Un Desvío bien cronometrado frente al Bastion torreta es letal." },
-        { name: "Hanzo", role: "damage", type: "soft", reason: "Dispara al enorme e inmóvil hitbox de Bastion desde un lugar seguro." }
-      ]},
-      "Cassidy": { role: "Damage", counters: [
-        { name: "Widowmaker", role: "damage", type: "hard", reason: "A distancias largas, la caída de daño de Cassidy lo inutiliza, y Widow lo fulmina." },
-        { name: "D.Va", role: "tank", type: "hard", reason: "Su Matriz traga la granada magnética e inutiliza a Cassidy por completo." },
-        { name: "Ana", role: "support", type: "soft", reason: "Lo puede dormir con relativa facilidad al no tener mucha movilidad lateral." }
-      ]},
-      "Echo": { role: "Damage", counters: [
-        { name: "Cassidy", role: "damage", type: "hard", reason: "El hitscan es el principal counter contra las maniobras aéreas." },
-        { name: "Ashe", role: "damage", type: "hard", reason: "Igual que Cassidy; castiga mucho a los héroes que flotan." },
-        { name: "D.Va", role: "tank", type: "soft", reason: "Vuela tras ella absorbiendo sus bombas pegajosas con la matriz." }
-      ]},
-      "Emre": { role: "Damage", counters: [
-        { name: "Pharah", role: "damage", type: "hard", reason: "El daño terrestre de Emre sufre mucho intentando alcanzar objetivos que vuelan constantemente." },
-        { name: "Echo", role: "damage", type: "hard", reason: "Igual que Pharah, la ventaja vertical es determinante contra él." },
-        { name: "Widowmaker", role: "damage", type: "soft", reason: "Castiga sus posiciones tácticas desde muy lejos." }
-      ]},
-      "Freja": { role: "Damage", counters: [
-        { name: "Reaper", role: "damage", type: "hard", reason: "Puede esquivar sus ataques con Forma Espectral y despellejarla en el combate cercano." },
-        { name: "Roadhog", role: "tank", type: "hard", reason: "El gancho rompe el posicionamiento agresivo de Freja y la castiga duro." }
-      ]},
-      "Genji": { role: "Damage", counters: [
-        { name: "Zarya", role: "tank", type: "hard", reason: "El rayo láser no puede ser Desviado por el sable de Genji." },
-        { name: "Winston", role: "tank", type: "hard", reason: "El Cañón Tesla electrocuta a Genji (ignorando Desvío) y lo sigue con el salto." },
-        { name: "Moira", role: "support", type: "hard", reason: "Rayo auto-dirigido de robo de vida que no se puede esquivar ni desviar." }
-      ]},
-      "Hanzo": { role: "Damage", counters: [
-        { name: "D.Va", role: "tank", type: "hard", reason: "Se echa encima de él bloqueando la Tormenta de Flechas entera con su matriz." },
-        { name: "Tracer", role: "damage", type: "hard", reason: "Demasiado escurridiza; Hanzo lo pasa muy mal intentando acertarle una flecha letal." },
-        { name: "Pharah", role: "damage", type: "soft", reason: "Los proyectiles lentos con parábola de Hanzo sufren mucho para darle en el aire." }
-      ]},
-      "Junkrat": { role: "Damage", counters: [
-        { name: "Pharah", role: "damage", type: "hard", reason: "El aire es intocable para las granadas que botan de Junkrat." },
-        { name: "Echo", role: "damage", type: "hard", reason: "Vuela libremente acribillándolo desde lo alto." },
-        { name: "Zarya", role: "tank", type: "hard", reason: "El spam ciego de explosivos de Junkrat carga el láser de Zarya al 100% de inmediato." }
-      ]},
-      "Mei": { role: "Damage", counters: [
-        { name: "Pharah", role: "damage", type: "hard", reason: "Puede bombardearla desde lo alto sin sufrir jamás la congelación." },
-        { name: "Orisa", role: "tank", type: "soft", reason: "Si activa Fortificación es inmune al efecto de ralentización." },
-        { name: "Kiriko", role: "support", type: "hard", reason: "El Suzu saca a todo el equipo de la Congelación (Definitiva) de golpe." }
-      ]},
-      "Pharah": { role: "Damage", counters: [
-        { name: "Soldier: 76", role: "damage", type: "hard", reason: "Rifle de asalto directo y constante para bajarla de los cielos." },
-        { name: "Widowmaker", role: "damage", type: "hard", reason: "En el aire el movimiento es predecible: blanco fácil para francotiradores." },
-        { name: "D.Va", role: "tank", type: "soft", reason: "Bloquea sus cohetes y vuela hacia ella para incordiar." }
-      ]},
-      "Reaper": { role: "Damage", counters: [
-        { name: "Pharah", role: "damage", type: "hard", reason: "Las escopetas de Reaper hacen 0 de daño a enemigos en el aire." },
-        { name: "Ana", role: "support", type: "hard", reason: "La granada anula su robo de vida pasivo, quitándole todo su sustain de combate." },
-        { name: "Cassidy", role: "damage", type: "soft", reason: "Si se acerca mucho, Cassidy lo traba con la granada e impacta disparos a la cabeza." }
-      ]},
-      "Shion": { role: "Damage", counters: [
-        { name: "Winston", role: "tank", type: "hard", reason: "Por mucho que Shion use sus Evasiones en la moto, el tesla auto-apunta y se la carga." },
-        { name: "Sombra", role: "damage", type: "hard", reason: "Shion es muy dependiente de habilidades. Hackearla apaga su movilidad dejándola inútil." },
-        { name: "Widowmaker", role: "damage", type: "soft", reason: "Shion es frágil. Una bala bien puesta a larga distancia frena sus combos." }
-      ]},
-      "Sierra": { role: "Damage", counters: [
-        { name: "Sombra", role: "damage", type: "hard", reason: "Puede hackear su Anchor Drone y el Tracking Shot impidiendo su auto-aim." },
-        { name: "D.Va", role: "tank", type: "hard", reason: "La Matriz se traga fácilmente sus dardos rastreadores y el patrón espiral de balas." },
-        { name: "Widowmaker", role: "damage", type: "hard", reason: "El Tracking Shot de Sierra tiene un rango máximo; Widow la asesina desde más lejos." }
-      ]},
-      "Sojourn": { role: "Damage", counters: [
-        { name: "Widowmaker", role: "damage", type: "hard", reason: "Sojourn necesita cargar el cañón de riel; Widow la mata al instante sin esperas." },
-        { name: "Sigma", role: "tank", type: "soft", reason: "Su escudo flexible detiene los disparos que Sojourn necesita para ganar carga de riel." },
-        { name: "Tracer", role: "damage", type: "soft", reason: "Una Tracer con buena movilidad esquivará el tiro secundario cargado y la agobiará." }
-      ]},
-      "Soldier: 76": { role: "Damage", counters: [
-        { name: "Widowmaker", role: "damage", type: "hard", reason: "El Soldado no puede matarla con daño constante desde lejos antes de llevarse un tiro en la cabeza." },
-        { name: "D.Va", role: "tank", type: "hard", reason: "La Matriz se puede comer la duración completa del Visor Táctico (Ultimate)." },
-        { name: "Ana", role: "support", type: "soft", reason: "Su Campo Biótico (curación) se anula con una simple granada morada." }
-      ]},
-      "Sombra": { role: "Damage", counters: [
-        { name: "Winston", role: "tank", type: "hard", reason: "Basta rociar la habitación con electricidad para revelar su invisibilidad sin tener que apuntar." },
-        { name: "Kiriko", role: "support", type: "hard", reason: "Limpia de inmediato el efecto del Virus y el Hackeo, estropeando el asesinato de Sombra." },
-        { name: "Mei", role: "damage", type: "soft", reason: "Su disparo principal se expande cubriendo mucha zona, perfecto para revelarla." }
-      ]},
-      "Symmetra": { role: "Damage", counters: [
-        { name: "Winston", role: "tank", type: "hard", reason: "Un leve giro con el cañón Tesla revienta todas sus 3 torretas juntas en un instante." },
-        { name: "Pharah", role: "damage", type: "hard", reason: "Rayo de corto alcance frente a cohetes aéreos; no hay nada que Symmetra pueda hacer." },
-        { name: "Junkrat", role: "damage", type: "soft", reason: "Limpia habitaciones y trampas de Symmetra haciendo rebotar granadas desde las esquinas." }
-      ]},
-      "Torbjörn": { role: "Damage", counters: [
-        { name: "Hanzo", role: "damage", type: "hard", reason: "Se asoma, dispara y se esconde: la torreta estalla sin poder responderle daño." },
-        { name: "Pharah", role: "damage", type: "hard", reason: "Tira misiles a la torreta estática desde lugares seguros y lejanos." },
-        { name: "Sigma", role: "tank", type: "soft", reason: "Planta un escudo directamente en la cara de la torreta tapando toda su línea de visión." }
-      ]},
-      "Tracer": { role: "Damage", counters: [
-        { name: "Torbjörn", role: "damage", type: "hard", reason: "La torreta apunta instantáneamente y no falla, lo que es devastador para los 150HP de Tracer." },
-        { name: "Brigitte", role: "support", type: "hard", reason: "Obliga a Tracer a mantener la distancia. Un golpe de maza, escudo e Inspire arruina el flanqueo." },
-        { name: "Cassidy", role: "damage", type: "soft", reason: "Su granada rastreadora puede frenar sus Traslaciones momentáneamente." }
-      ]},
-      "Vendetta": { role: "Damage", counters: [
-        { name: "Pharah", role: "damage", type: "hard", reason: "Al ser Vendetta 'melee-only', no tiene forma humana de golpear a héroes voladores." },
-        { name: "Echo", role: "damage", type: "hard", reason: "Igual que Pharah, domina a la gladiadora desde alturas inalcanzables." },
-        { name: "Ramattra", role: "tank", type: "hard", reason: "Sus puñetazos Némesis ignoran la Warding Stance (escudo) de Vendetta y le ganan a golpes." },
-        { name: "Mei", role: "damage", type: "soft", reason: "La ralentización arruina el Whirlwind Dash y acorta su agilidad a melé." }
-      ]},
-      "Venture": { role: "Damage", counters: [
-        { name: "Pharah", role: "damage", type: "hard", reason: "Las herramientas de Venture se basan en combate terrestre y explosivos a corta; Pharah vuela segura." },
-        { name: "Echo", role: "damage", type: "hard", reason: "Misma situación, el cielo es un punto ciego para Venture." },
-        { name: "Sombra", role: "damage", type: "soft", reason: "Hackear impedi que use su Excavación bajo tierra para escapar de problemas." }
-      ]},
-      "Widowmaker": { role: "Damage", counters: [
-        { name: "Winston", role: "tank", type: "hard", reason: "Un tanque móvil con escudo que salta directo al balcón donde ella está acampando." },
-        { name: "Wrecking Ball", role: "tank", type: "hard", reason: "El tanque más veloz. Llega, la empuja y la acribilla sin que Widow pueda posicionarse." },
-        { name: "Sombra", role: "damage", type: "hard", reason: "Llega en modo invisible directamente por detrás para el asesinato." },
-        { name: "Genji", role: "damage", type: "soft", reason: "Cierra la distancia con el muro, hace dash y devuelve sus balas con Desvío." }
-      ]},
+      // ===== DAÑO (21 Héroes) =====
+      "Ashe": { role: "Damage", counters: [ { name: "Widowmaker", role: "damage", type: "hard", reason: "La supera en rango y daño letal." } ] },
+      "Bastion": { role: "Damage", counters: [ { name: "Genji", role: "damage", type: "hard", reason: "Desvío letal contra la torreta." } ] },
+      "Cassidy": { role: "Damage", counters: [ { name: "Widowmaker", role: "damage", type: "hard", reason: "Supera su rango." } ] },
+      "Echo": { role: "Damage", counters: [ { name: "Cassidy", role: "damage", type: "hard", reason: "Hitscan consistente para derribarla." } ] },
+      "Emre": { role: "Damage", counters: [ { name: "Pharah", role: "damage", type: "hard", reason: "No puede combatir blancos aéreos." } ] },
+      "Genji": { role: "Damage", counters: [ { name: "Zarya", role: "tank", type: "hard", reason: "Rayo ignora el desvío." }, { name: "Moira", role: "support", type: "hard", reason: "No puede desviar su rayo." } ] },
+      "Hanzo": { role: "Damage", counters: [ { name: "D.Va", role: "tank", type: "hard", reason: "Matriz absorbe todo." } ] },
+      "Junkrat": { role: "Damage", counters: [ { name: "Pharah", role: "damage", type: "hard", reason: "Incapaz de hacerle daño aéreo." } ] },
+      "Mei": { role: "Damage", counters: [ { name: "Pharah", role: "damage", type: "hard", reason: "Fuera de alcance del hielo." } ] },
+      "Pharah": { role: "Damage", counters: [ { name: "Soldier: 76", role: "damage", type: "hard", reason: "Hitscan constante." }, { name: "Widowmaker", role: "damage", type: "hard", reason: "Blanco fácil a distancia." } ] },
+      "Reaper": { role: "Damage", counters: [ { name: "Pharah", role: "damage", type: "hard", reason: "Cero daño a larga distancia." } ] },
+      "Shion": { role: "Damage", counters: [ { name: "Winston", role: "tank", type: "hard", reason: "El tesla no falla pese a su evasión." }, { name: "Sombra", role: "damage", type: "hard", reason: "Sin habilidades es de cristal." } ] },
+      "Sojourn": { role: "Damage", counters: [ { name: "Widowmaker", role: "damage", type: "hard", reason: "Daño instantáneo vs cargado." } ] },
+      "Soldier: 76": { role: "Damage", counters: [ { name: "D.Va", role: "tank", type: "hard", reason: "Anula visor táctico." } ] },
+      "Sombra": { role: "Damage", counters: [ { name: "Winston", role: "tank", type: "hard", reason: "Fácil de revelar con el arma." } ] },
+      "Symmetra": { role: "Damage", counters: [ { name: "Winston", role: "tank", type: "hard", reason: "Limpia torretas rápido." } ] },
+      "Torbjörn": { role: "Damage", counters: [ { name: "Hanzo", role: "damage", type: "hard", reason: "Destruye torreta sin exponerse." } ] },
+      "Tracer": { role: "Damage", counters: [ { name: "Torbjörn", role: "damage", type: "hard", reason: "Torreta la frena." }, { name: "Brigitte", role: "support", type: "hard", reason: "Difícil de asesinar." } ] },
+      "Venture": { role: "Damage", counters: [ { name: "Pharah", role: "damage", type: "hard", reason: "Kit muy terrestre." } ] },
+      "Widowmaker": { role: "Damage", counters: [ { name: "Winston", role: "tank", type: "hard", reason: "Salta a por ella." }, { name: "Sombra", role: "damage", type: "hard", reason: "Emboscada invisible." } ] },
+      "Mizuki": { role: "Damage", counters: [ { name: "Sombra", role: "damage", type: "hard", reason: "Apaga su armamento especial." } ] },
+      "Vendetta": { role: "Damage", counters: [ { name: "Zarya", role: "tank", type: "hard", reason: "Burbujas absorben sus explosivos." } ] },
+      "Wuyang": { role: "Damage", counters: [ { name: "Pharah", role: "damage", type: "soft", reason: "Vuela sobre sus trampas." } ] },
+      "Sierra": { role: "Damage", counters: [ { name: "Widowmaker", role: "damage", type: "hard", reason: "Supera su alcance táctico." } ] },
 
-      "Ana": { role: "Support", counters: [
-        { name: "Kiriko", role: "support", type: "hard", reason: "Suzu Purificador limpia absolutamente todo el poder de Ana (anti-curación y dormir)." },
-        { name: "D.Va", role: "tank", type: "hard", reason: "Usa la matriz para interceptar granadas y dardos antes de que impacten." },
-        { name: "Tracer", role: "damage", type: "hard", reason: "Es sumamente complicado atinar un dardo a un objetivo tan pequeño que hace blinks." }
-      ]},
-      "Anran": { role: "Support", counters: [
-        { name: "Sombra", role: "damage", type: "hard", reason: "Un PEM o hackeo apaga su habilidad de curación grupal dejándolo muy desprotegido." },
-        { name: "Winston", role: "tank", type: "soft", reason: "La burbuja de Winston aísla las líneas de sanación de Anran impidiendo curar a sus compañeros." },
-        { name: "Tracer", role: "damage", type: "hard", reason: "Un constante acoso a la retaguardia de Anran no le permite centrarse en el apoyo del equipo." }
-      ]},
-      "Baptiste": { role: "Support", counters: [
-        { name: "Sombra", role: "damage", type: "hard", reason: "El PEM destruye el Campo de Inmortalidad (la lámpara) al instante sin dispararle." },
-        { name: "Doomfist", role: "tank", type: "soft", reason: "Puede meterse y sacar a los aliados a golpes del círculo de la inmortalidad." },
-        { name: "Pharah", role: "damage", type: "soft", reason: "Baptiste sufre para acertar proyectiles constantes al aire." }
-      ]},
-      "Brigitte": { role: "Support", counters: [
-        { name: "Pharah", role: "damage", type: "hard", reason: "Bombardea sobre su cabeza y escudo; Brigitte no tiene alcance para responderle." },
-        { name: "Junkrat", role: "damage", type: "hard", reason: "Las bombas revientan su débil escudo con suma rapidez desde la lejanía." },
-        { name: "Reinhardt", role: "tank", type: "hard", reason: "El martillo de Reinhardt gana cualquier pelea cuerpo a cuerpo contra la maza de Brigitte." }
-      ]},
-      "Illari": { role: "Support", counters: [
-        { name: "Sombra", role: "damage", type: "hard", reason: "Va invisible, destruye la torreta pilona de curación fácil, y hackea a Illari." },
-        { name: "D.Va", role: "tank", type: "soft", reason: "Se abalanza y se traga el tremendo 'Sol Cautivo' (Ultimate) entero con la matriz." },
-        { name: "Tracer", role: "damage", type: "soft", reason: "Aparece de la nada para volar la pilona en 1 segundo y acosar." }
-      ]},
-      "Jetpack Cat": { role: "Support", counters: [
-        { name: "Widowmaker", role: "damage", type: "hard", reason: "El vuelo permanente pasivo del Jetpack lo convierte en un objetivo constante y muy predecible." },
-        { name: "Sombra", role: "damage", type: "hard", reason: "Hackear deshabilita su vuelo y su conexión de transporte (tether), dejándolo vendido en el suelo." },
-        { name: "Roadhog", role: "tank", type: "hard", reason: "Engancha al pobre felino directamente del cielo a su muerte segura." },
-        { name: "Ashe", role: "damage", type: "soft", reason: "Hitscan muy útil para acribillarlo de lejos mientras vuela." }
-      ]},
-      "Juno": { role: "Support", counters: [
-        { name: "Widowmaker", role: "damage", type: "hard", reason: "Su movimiento vertical en los planeadores es lento, haciéndola una víctima idónea para un headshot." },
-        { name: "Sombra", role: "damage", type: "hard", reason: "Hackeo anula los anillos de velocidad y sus botas, volviéndola inservible y presa fácil." },
-        { name: "Winston", role: "tank", type: "soft", reason: "Salta encima forzándola a gastar todas sus herramientas de huida al instante." }
-      ]},
-      "Kiriko": { role: "Support", counters: [
-        { name: "Roadhog", role: "tank", type: "soft", reason: "Si consigues baitar (forzar) el Suzu, un gancho tras eso la liquida seguro." },
-        { name: "Tracer", role: "damage", type: "soft", reason: "La obliga a gastar Suzu defensivamente o su curación para protegerse a sí misma, aislando al equipo." },
-        { name: "Ana", role: "support", type: "soft", reason: "Tirar nades moradas constantemente obliga a Kiriko a estar usando el Suzu todo el tiempo, gastando cooldowns." }
-      ]},
-      "Lifeweaver": { role: "Support", counters: [
-        { name: "Sombra", role: "damage", type: "hard", reason: "PEM pulveriza el Árbol de la Vida y bloquea el uso del Pétalo o el Agarre salvavidas." },
-        { name: "Echo", role: "damage", type: "hard", reason: "Persigue a Lifeweaver con suma facilidad hasta lo alto de su Plataforma Pétalo." },
-        { name: "Pharah", role: "damage", type: "soft", reason: "Angulación en picado burla las paredes y protecciones aéreas del kit de LW." }
-      ]},
-      "Lúcio": { role: "Support", counters: [
-        { name: "Sombra", role: "damage", type: "hard", reason: "El hack lo baja de las paredes. El PEM erradica los escudos de la Barrera de Sonido." },
-        { name: "Moira", role: "support", type: "hard", reason: "El click derecho auto-apunta ignorando por completo todas sus florituras esquivando." },
-        { name: "Winston", role: "tank", type: "soft", reason: "El Tesla electrocuta a Lúcio en el área sin necesidad de trackearlo rápido." }
-      ]},
-      "Mercy": { role: "Support", counters: [
-        { name: "Widowmaker", role: "damage", type: "hard", reason: "Penaliza gravemente las resurrecciones estáticas y los Guardian Angels mal posicionados." },
-        { name: "Soldier: 76", role: "damage", type: "soft", reason: "Si Mercy se expone volando con Pharah o Echo, el Visor Táctico las aniquila a ambas." },
-        { name: "D.Va", role: "tank", type: "soft", reason: "Tiene la movilidad necesaria para saltarle encima cada vez que intente recuperar vida." }
-      ]},
-      "Mizuki": { role: "Support", counters: [
-        { name: "Winston", role: "tank", type: "hard", reason: "Como Mizuki basa su soporte en movilidad en lugar de curación masiva, Winston y Doomfist pueden perseguirla." },
-        { name: "Sombra", role: "damage", type: "hard", reason: "Apaga su movilidad, quitándole su identidad defensiva y atrapándola lejos." },
-        { name: "Moira", role: "support", type: "soft", reason: "Daña y drena vida en duelo ignorando su movilidad escurridiza." }
-      ]},
-      "Moira": { role: "Support", counters: [
-        { name: "D.Va", role: "tank", type: "hard", reason: "La Matriz se traga todos los Orbes (curativos o dañinos), mermando drásticamente su eficacia." },
-        { name: "Ana", role: "support", type: "hard", reason: "Una Granada anti-heal lanzada al grupo anula el inmenso burst grupal por el que Moira destaca." },
-        { name: "Widowmaker", role: "damage", type: "hard", reason: "Moira necesita cercanía; Widowmaker la snipea antes de que pueda lanzar recursos." }
-      ]},
-      "Wuyang": { role: "Support", counters: [
-        { name: "D.Va", role: "tank", type: "hard", reason: "Puede comerse fácilmente los orbes de agua que Wuyang necesita controlar y cargar." },
-        { name: "Tracer", role: "damage", type: "hard", reason: "Wuyang es vulnerable mientras canaliza / controla las trayectorias del orbe; Tracer lo aprovecha." },
-        { name: "Genji", role: "damage", type: "soft", reason: "Se aproxima ágilmente y burla el flujo rítmico de sus ataques de zona de agua." }
-      ]},
-      "Zenyatta": { role: "Support", counters: [
-        { name: "Tracer", role: "damage", type: "hard", reason: "Es muy lento, redondo y sin habilidades de movilidad, blanco perfecto." },
-        { name: "Winston", role: "tank", type: "hard", reason: "Salta directo hacia él aislando y bloqueando sus orbes con el escudo." }
-      ]}
+      // ===== APOYO (13 Héroes) =====
+      "Ana": { role: "Support", counters: [ { name: "Kiriko", role: "support", type: "hard", reason: "Suzu limpia antisanación y dardo." } ] },
+      "Anran": { role: "Support", counters: [ { name: "Sombra", role: "damage", type: "hard", reason: "Hackeo corta curaciones de área." } ] },
+      "Baptiste": { role: "Support", counters: [ { name: "Sombra", role: "damage", type: "hard", reason: "PEM rompe el campo." } ] },
+      "Brigitte": { role: "Support", counters: [ { name: "Pharah", role: "damage", type: "hard", reason: "Inalcanzable, mucho daño explosivo." } ] },
+      "Freja": { role: "Support", counters: [ { name: "Reaper", role: "damage", type: "hard", reason: "La derrite de cerca." } ] },
+      "Illari": { role: "Support", counters: [ { name: "Sombra", role: "damage", type: "hard", reason: "Hackea el pilón curativo." } ] },
+      "Juno": { role: "Support", counters: [ { name: "Winston", role: "tank", type: "soft", reason: "Salta y la obliga a gastar botas." }, { name: "Widowmaker", role: "damage", type: "hard", reason: "Blanco predecible en el aire." } ] },
+      "Kiriko": { role: "Support", counters: [ { name: "Roadhog", role: "tank", type: "soft", reason: "Gancho letal sin suzu." } ] },
+      "Lifeweaver": { role: "Support", counters: [ { name: "Sombra", role: "damage", type: "hard", reason: "PEM destruye su Árbol." } ] },
+      "Lúcio": { role: "Support", counters: [ { name: "Moira", role: "support", type: "hard", reason: "Rayo fácil de acertar." } ] },
+      "Mercy": { role: "Support", counters: [ { name: "Widowmaker", role: "damage", type: "hard", reason: "Blanco fácil al volar." } ] },
+      "Moira": { role: "Support", counters: [ { name: "D.Va", role: "tank", type: "hard", reason: "Absorbe orbes." }, { name: "Ana", role: "support", type: "hard", reason: "Granada anula cura en área." } ] },
+      "Zenyatta": { role: "Support", counters: [ { name: "Tracer", role: "damage", type: "hard", reason: "Lento, redondo, blanco perfecto." } ] }
     };
 
-    // --- NUEVAS VARIABLES GLOBALES ---
-    let selectedHeroKey = "Shion"; 
-    let appMode = "individual"; // "individual" | "analyzer"
-    let activeTab = "counters"; // "counters" | "strong" | "synergies"
-    let enemyTeam = []; 
-    let apiPortraits = {}; // Almacenará las URLs oficiales de las fotos
-
-    // --- HELPER PARA FOTOS DE LA API ---
-    function getApiName(heroName) {
-      const overrides = {
-        "D.Va": "dva",
+    function getHeroSlug(name) {
+      // Casos especiales de nombres para que la API no falle
+      const exceptions = {
         "Soldier: 76": "soldier-76",
         "Wrecking Ball": "wrecking-ball",
         "Junker Queen": "junker-queen",
+        "D.Va": "dva",
         "Lúcio": "lucio",
-        "Torbjörn": "torbjorn",
-        "Jetpack Cat": "jetpack-cat"
+        "Torbjörn": "torbjorn"
       };
-      if (overrides[heroName]) return overrides[heroName];
-      // Quitar acentos, espacios y símbolos para la URL
-      return heroName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, '');
-    }
-
-    // --- SISTEMA DE ESTADÍSTICAS Y SINERGIAS DINÁMICAS ---
-    function getHeroExtras(heroName, role) {
-      // 1. Stats Base por Rol
-      let stats = { hp: 250, armor: 0, shield: 0 };
-      if (role === 'Tank') stats = { hp: 450, armor: 100, shield: 0 };
+      if (exceptions[name]) return exceptions[name];
       
-      // Ajustes específicos (algunos ejemplos precisos)
-      if (heroName === 'Tracer' || heroName === 'Widowmaker') stats = { hp: 175, armor: 0, shield: 0 };
-      if (heroName === 'Zenyatta') stats = { hp: 75, armor: 0, shield: 150 };
-      if (heroName === 'Zarya') stats = { hp: 250, armor: 0, shield: 225 };
-      if (heroName === 'Reinhardt') stats = { hp: 350, armor: 300, shield: 0 };
-      if (heroName === 'D.Va') stats = { hp: 350, armor: 300, shield: 0 };
-      if (heroName === 'Brigitte') stats = { hp: 200, armor: 50, shield: 0 };
-
-      // 2. Sinergias (Cálculo básico o predefinido)
-      let synergies = [];
-      if (heroName === 'Pharah' || heroName === 'Echo') synergies = ['Mercy', 'Ana'];
-      else if (heroName === 'Genji' || heroName === 'Tracer') synergies = ['Winston', 'Ana', 'Zenyatta'];
-      else if (heroName === 'Reinhardt') synergies = ['Lúcio', 'Baptiste', 'Zarya'];
-      else if (role === 'Tank') synergies = ['Ana', 'Kiriko', 'Lúcio']; 
-      else if (role === 'Damage') synergies = ['Mercy', 'Zenyatta'];
-      else if (role === 'Support') synergies = ['Brigitte', 'Winston', 'Cassidy'];
-
-      return { stats, synergies };
+      return name.toLowerCase().replace(/[:.\s]/g, '').replace('ö', 'o').replace('ú', 'u');
     }
 
-    // --- OBTENCIÓN INVERSA: FUERTE CONTRA ---
-    function getStrongAgainst(targetHero) {
-       let strongAgainstList = [];
-       for (let h in HEROES_DB) {
-          const dbHero = HEROES_DB[h];
-          const counteredByTarget = dbHero.counters.find(c => c.name === targetHero);
-          if (counteredByTarget) {
-             strongAgainstList.push({
-                name: h,
-                role: dbHero.role.toLowerCase(),
-                type: counteredByTarget.type, // Hard o Soft
-                reason: counteredByTarget.reason
-             });
-          }
-       }
-       return strongAgainstList;
-    }
-
-    async function init() {
-      // 1. Descargar el catálogo de fotos desde la API oficial de Overfast
+    async function fetchImages() {
       try {
         const response = await fetch('https://overfast-api.tekrop.fr/heroes');
         const data = await response.json();
-        data.forEach(hero => { apiPortraits[hero.key] = hero.portrait; });
-      } catch (error) {
-        console.warn("No se pudo conectar a la API para cargar las fotos", error);
+        data.forEach(hero => { apiImages[hero.name] = hero.portrait; });
+      } catch (e) {
+        console.warn("No se pudo contactar con OverFast API. Usando iniciales de fallback.");
       }
+      init();
+    }
 
+    function getAvatarHTML(name) {
+      if (apiImages[name]) return `background-image: url('${apiImages[name]}'); color: transparent;`;
+      return `background-color: #2d3848; color: white;`;
+    }
+    function getInitials(name) { return name.substring(0, 2).toUpperCase(); }
+
+    function init() {
       renderRoster();
-      renderAnalyzerSlots();
-      if(appMode === 'individual') selectHero(selectedHeroKey);
-    }
-
-    function setMode(mode) {
-      appMode = mode;
-      document.getElementById('btnModeIndividual').classList.toggle('active', mode === 'individual');
-      document.getElementById('btnModeAnalyzer').classList.toggle('active', mode === 'analyzer');
-      
-      document.getElementById('individualDashboard').style.display = mode === 'individual' ? 'grid' : 'none';
-      document.getElementById('analyzerDashboard').style.display = mode === 'analyzer' ? 'block' : 'none';
-
-      // Actualizar vista de roster
-      document.querySelectorAll('.hero-btn').forEach(btn => {
-        if (mode === 'analyzer') {
-          btn.classList.toggle('active', enemyTeam.includes(btn.dataset.name));
-        } else {
-          btn.classList.toggle('active', btn.dataset.name === selectedHeroKey);
-        }
-      });
-    }
-
-    function handleHeroClick(heroName) {
-      if (appMode === 'individual') {
-        selectHero(heroName);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
-        // Modo Analizador
-        if (enemyTeam.includes(heroName)) {
-          enemyTeam = enemyTeam.filter(h => h !== heroName);
-        } else if (enemyTeam.length < 5) {
-          enemyTeam.push(heroName);
-        }
-        
-        document.querySelectorAll('.hero-btn').forEach(btn => {
-          btn.classList.toggle('active', enemyTeam.includes(btn.dataset.name));
-        });
-        
-        renderAnalyzerSlots();
-        calculateAnalyzer();
-      }
-    }
-
-    function setTab(tabName) {
-      activeTab = tabName;
-      document.getElementById('tabCounters').classList.toggle('active', tabName === 'counters');
-      document.getElementById('tabStrong').classList.toggle('active', tabName === 'strong');
-      document.getElementById('tabSynergies').classList.toggle('active', tabName === 'synergies');
-      selectHero(selectedHeroKey); // Re-renderizar datos
+      selectHero(selectedHeroKey);
     }
 
     function renderRoster() {
@@ -629,23 +341,14 @@
       Object.keys(HEROES_DB).sort().forEach(key => {
         const hData = HEROES_DB[key];
         const btn = document.createElement('button');
-        btn.className = `hero-btn ${key === selectedHeroKey && appMode === 'individual' ? 'active' : ''}`;
+        btn.className = `hero-btn ${key === selectedHeroKey ? 'active' : ''}`;
         btn.dataset.name = key;
-        btn.title = key; /* Muestra el nombre al pasar el ratón */
-        btn.onclick = () => handleHeroClick(key);
-        
-        const apiName = getApiName(key);
-        const fallbackColor = hData.role === 'Tank' ? '3b82f6' : (hData.role === 'Damage' ? 'ef4444' : '10b981');
-        const fallbackSrc = `https://api.dicebear.com/7.x/initials/svg?seed=${key}&backgroundColor=${fallbackColor}&textColor=ffffff`;
-        const imgSrc = apiPortraits[apiName] || fallbackSrc;
-        
-        // Se añade solo la imagen, sin el texto
-        btn.innerHTML = `
-          <img src="${imgSrc}" 
-               onerror="this.onerror=null; this.src='${fallbackSrc}';" 
-               alt="${key}"
-               style="width: 100%; height: 100%; object-fit: cover; display: block;">
-        `;
+        btn.style = getAvatarHTML(key);
+        btn.innerHTML = apiImages[key] ? '' : getInitials(key);
+        btn.onclick = () => {
+          selectHero(key);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
 
         if (hData.role === 'Tank') tankBox.appendChild(btn);
         else if (hData.role === 'Damage') damageBox.appendChild(btn);
@@ -653,178 +356,169 @@
       });
     }
 
-    function renderAnalyzerSlots() {
-      const container = document.getElementById('enemySlotsContainer');
-      container.innerHTML = '';
-      for (let i = 0; i < 5; i++) {
-        const slot = document.createElement('div');
-        slot.className = 'enemy-slot';
-        if (enemyTeam[i]) {
-          const hero = enemyTeam[i];
-          const apiName = getApiName(hero);
-          const role = HEROES_DB[hero]?.role || 'Damage';
-          const fallbackColor = role === 'Tank' ? '3b82f6' : (role === 'Damage' ? 'ef4444' : '10b981');
-          const fallbackSrc = `https://api.dicebear.com/7.x/initials/svg?seed=${hero}&backgroundColor=${fallbackColor}&textColor=ffffff`;
-          const imgSrc = apiPortraits[apiName] || fallbackSrc;
+    function getHeroExtras(heroName, role) {
+      let stats = { hp: 250, armor: 0, shield: 0 };
+      if (HEROES_DB[heroName] && HEROES_DB[heroName].stats) {
+        stats = HEROES_DB[heroName].stats;
+      } else {
+        if (role === 'Tank') stats = { hp: 450, armor: 100, shield: 0 };
+        if (role === 'Support') stats = { hp: 250, armor: 0, shield: 0 };
+      }
 
-          slot.innerHTML = `<img src="${imgSrc}" 
-                            onerror="this.onerror=null; this.src='${fallbackSrc}';" alt="${hero}">`;
-          slot.onclick = () => handleHeroClick(hero); // Click para remover
-        } else {
-          slot.innerHTML = '+';
+      let strongAgainst = [];
+      Object.keys(HEROES_DB).forEach(k => {
+        if(HEROES_DB[k].counters) {
+          HEROES_DB[k].counters.forEach(c => {
+            if(c.name === heroName) strongAgainst.push({ name: k, role: HEROES_DB[k].role.toLowerCase(), type: c.type, reason: c.reason });
+          });
         }
-        container.appendChild(slot);
-      }
-    }
-
-    function calculateAnalyzer() {
-      const panel = document.getElementById('recomContent');
-      if (enemyTeam.length === 0) {
-        panel.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 20px;">Añade enemigos arriba para calcular la mejor estrategia.</p>';
-        return;
-      }
-
-      let scores = {};
-      Object.keys(HEROES_DB).forEach(h => {
-        scores[h] = { name: h, role: HEROES_DB[h].role, points: 0, countering: [] };
       });
 
-      enemyTeam.forEach(enemy => {
-        const eData = HEROES_DB[enemy];
-        if(!eData) return;
-        eData.counters.forEach(c => {
-          if(scores[c.name]) {
-            scores[c.name].points += (c.type === 'hard' ? 2 : 1);
-            scores[c.name].countering.push(enemy);
-          }
-        });
-      });
+      let synergy = [];
+      if(role === 'Damage') synergy.push({ name: 'Mercy', role: 'support', type: 'soft', reason: 'Potencia su daño (Damage Boost).' });
+      if(role === 'Tank') synergy.push({ name: 'Ana', role: 'support', type: 'hard', reason: 'Sana masivamente tanques grandes.' });
+      if(role === 'Support') synergy.push({ name: 'Reinhardt', role: 'tank', type: 'soft', reason: 'Protege las líneas traseras.' });
 
-      // Ordenar e imprimir Top
-      const sorted = Object.values(scores).filter(s => s.points > 0).sort((a, b) => b.points - a.points);
-      
-      const topTanks = sorted.filter(s => s.role === 'Tank').slice(0, 2);
-      const topDps = sorted.filter(s => s.role === 'Damage').slice(0, 2);
-      const topSupports = sorted.filter(s => s.role === 'Support').slice(0, 2);
-
-      const renderRecomList = (title, list) => {
-        if(list.length === 0) return '';
-        let html = `<div><h4 style="color: var(--text-muted); border-bottom: 1px solid #2d3848; padding-bottom: 5px; margin-bottom: 10px;">${title}</h4><div class="recom-grid">`;
-        list.forEach(item => {
-          const apiName = getApiName(item.name);
-          const fallbackColor = item.role === 'Tank' ? '3b82f6' : (item.role === 'Damage' ? 'ef4444' : '10b981');
-          const fallbackSrc = `https://api.dicebear.com/7.x/initials/svg?seed=${item.name}&backgroundColor=${fallbackColor}&textColor=ffffff`;
-          const imgSrc = apiPortraits[apiName] || fallbackSrc;
-
-          html += `
-            <div class="recom-card">
-              <img src="${imgSrc}" 
-                   onerror="this.onerror=null; this.src='${fallbackSrc}';">
-              <div>
-                <h4>${item.name}</h4>
-                <p>Útil contra: ${item.countering.join(', ')}</p>
-              </div>
-              <div class="recom-pts">${item.points} pts</div>
-            </div>`;
-        });
-        html += `</div></div>`;
-        return html;
-      };
-
-      panel.innerHTML = renderRecomList('🛡️ Mejores Tanques', topTanks) + 
-                        renderRecomList('⚔️ Mejores Daños (DPS)', topDps) + 
-                        renderRecomList('🌿 Mejores Apoyos', topSupports);
+      return { stats, strongAgainst, synergy };
     }
 
-    function selectHero(heroName) {
+    async function selectHero(heroName) {
       selectedHeroKey = heroName;
       const data = HEROES_DB[heroName];
       if (!data) return;
 
+      const extras = getHeroExtras(heroName, data.role);
+
+      // Info Héroe
       document.getElementById('targetName').innerText = heroName;
-      document.getElementById('targetRole').innerText = data.role === 'Damage' ? 'Daño' : (data.role === 'Tank' ? 'Tanque' : 'Apoyo');
-      
+      let roleIcon = data.role === 'Tank' ? '<i class="fa-solid fa-shield-halved"></i> Tanque' : (data.role === 'Damage' ? '<i class="fa-solid fa-crosshairs"></i> Daño' : '<i class="fa-solid fa-heart-pulse"></i> Apoyo');
       const roleClass = data.role === 'Tank' ? 'role-tank' : (data.role === 'Damage' ? 'role-damage' : 'role-support');
-      document.getElementById('targetRole').className = `hero-role-badge ${roleClass}`;
+      
+      let roleBadge = document.getElementById('targetRole');
+      roleBadge.innerHTML = roleIcon;
+      roleBadge.className = `hero-role-badge ${roleClass}`;
       
       const targetImg = document.getElementById('targetImg');
-      const apiName = getApiName(heroName);
-      const fallbackColor = data.role === 'Tank' ? '3b82f6' : (data.role === 'Damage' ? 'ef4444' : '10b981');
-      const fallbackSrc = `https://api.dicebear.com/7.x/initials/svg?seed=${heroName}&backgroundColor=${fallbackColor}&textColor=ffffff`;
-      const imgSrc = apiPortraits[apiName] || fallbackSrc;
-      
-      // Aplicar foto usando la URL de la API y el fallback local
-      targetImg.innerHTML = `<img src="${imgSrc}" 
-        onerror="this.onerror=null; this.src='${fallbackSrc}';" 
-        style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
-      
+      targetImg.style = getAvatarHTML(heroName);
       targetImg.style.borderColor = data.role === 'Tank' ? 'var(--tank-color)' : (data.role === 'Damage' ? 'var(--dps-color)' : 'var(--support-color)');
+      targetImg.innerHTML = apiImages[heroName] ? '' : getInitials(heroName);
 
-      if(appMode === 'individual') {
-        document.querySelectorAll('.hero-btn').forEach(btn => {
-          btn.classList.toggle('active', btn.dataset.name === heroName);
-        });
+      // Botones activos
+      document.querySelectorAll('.hero-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.name === heroName);
+      });
+
+      // Pestañas
+      window.currentCounters = data.counters || [];
+      window.currentStrong = extras.strongAgainst;
+      window.currentSynergy = extras.synergy;
+      setTab(activeTab);
+
+      // --- API FETCH PARA STATS Y PERKS AUTOMÁTICOS ---
+      document.getElementById('txtHp').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+      document.getElementById('txtArmor').innerText = '-';
+      document.getElementById('txtShield').innerText = '-';
+      
+      const perksContainer = document.getElementById('perksContainer');
+      if (data.perks) {
+        perksContainer.style.display = 'flex';
+        document.getElementById('txtMinorPerk').innerText = data.perks.minor;
+        document.getElementById('txtMajorPerk').innerText = data.perks.major;
+      } else {
+        perksContainer.style.display = 'none';
       }
 
-      // Actualizar Estadísticas
-      const extras = getHeroExtras(heroName, data.role);
-      const totalHP = extras.stats.hp + extras.stats.armor + extras.stats.shield;
-      
-      document.getElementById('txtHp').innerText = extras.stats.hp;
-      document.getElementById('txtArmor').innerText = extras.stats.armor;
-      document.getElementById('txtShield').innerText = extras.stats.shield;
-      
-      document.getElementById('barHp').style.width = `${(extras.stats.hp / totalHP) * 100}%`;
-      document.getElementById('barArmor').style.width = `${(extras.stats.armor / totalHP) * 100}%`;
-      document.getElementById('barShield').style.width = `${(extras.stats.shield / totalHP) * 100}%`;
+      try {
+        const slug = getHeroSlug(heroName);
+        let heroApiData = null;
 
-      // Renderizar el contenido según la pestaña seleccionada
-      if(activeTab === 'counters') renderCards(data.counters, 'Me hace counter');
-      else if(activeTab === 'strong') renderCards(getStrongAgainst(heroName), 'Destruyo a');
-      else if(activeTab === 'synergies') renderCards(extras.synergies.map(s => ({name: s, role: HEROES_DB[s]?.role.toLowerCase(), type: 'synergy', reason: 'Excelente combinación estratégica.'})), 'Sinergia');
+        // Caché para no volver a descargar los datos si ya hicimos clic en este héroe antes
+        if (window.heroApiCache && window.heroApiCache[slug]) {
+          heroApiData = window.heroApiCache[slug];
+        } else {
+          const res = await fetch(`https://overfast-api.tekrop.fr/heroes/${slug}`);
+          if (res.ok) {
+            heroApiData = await res.json();
+            if (!window.heroApiCache) window.heroApiCache = {};
+            window.heroApiCache[slug] = heroApiData; // Guardamos en memoria
+          }
+        }
+
+        if (heroApiData) {
+          // 1. Asignar Vida/Armadura/Escudo real desde la API
+          const stats = heroApiData.hitpoints || { health: extras.stats.hp, armor: extras.stats.armor, shields: extras.stats.shield };
+          
+          document.getElementById('txtHp').innerText = stats.health || 0;
+          document.getElementById('txtArmor').innerText = stats.armor || 0;
+          document.getElementById('txtShield').innerText = stats.shields || 0;
+          
+          const totalHP = (stats.health || 0) + (stats.armor || 0) + (stats.shields || 0) || 1;
+          document.getElementById('barHp').style.width = `${((stats.health || 0) / totalHP) * 100}%`;
+          document.getElementById('barArmor').style.width = `${((stats.armor || 0) / totalHP) * 100}%`;
+          document.getElementById('barShield').style.width = `${((stats.shields || 0) / totalHP) * 100}%`;
+
+        } else {
+           throw new Error("Sin datos en la API");
+        }
+
+      } catch (e) {
+        // Fallback de rescate si el héroe es muy nuevo (como Shion) y la API oficial aún no lo tiene
+        document.getElementById('txtHp').innerText = extras.stats.hp;
+        document.getElementById('txtArmor').innerText = extras.stats.armor;
+        document.getElementById('txtShield').innerText = extras.stats.shield;
+        
+        const totalHP = extras.stats.hp + extras.stats.armor + extras.stats.shield || 1;
+        document.getElementById('barHp').style.width = `${(extras.stats.hp / totalHP) * 100}%`;
+        document.getElementById('barArmor').style.width = `${(extras.stats.armor / totalHP) * 100}%`;
+        document.getElementById('barShield').style.width = `${(extras.stats.shield / totalHP) * 100}%`;
+      }
     }
 
-    function renderCards(list, emptyMessage) {
-      const tankBox = document.getElementById('tankCounters');
-      const dpsBox = document.getElementById('dpsCounters');
-      const supportBox = document.getElementById('supportCounters');
+    function setTab(tabName) {
+      activeTab = tabName;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(`tab-${tabName}`).classList.add('active');
 
+      if(tabName === 'counters') renderCards(window.currentCounters);
+      else if(tabName === 'strong') renderCards(window.currentStrong);
+      else if(tabName === 'synergy') renderCards(window.currentSynergy);
+    }
+
+    function renderCards(list) {
+      const tankBox = document.getElementById('tankCol');
+      const dpsBox = document.getElementById('dpsCol');
+      const supportBox = document.getElementById('supportCol');
       tankBox.innerHTML = ''; dpsBox.innerHTML = ''; supportBox.innerHTML = '';
 
-      list.forEach(item => {
-        let badgeClass = item.type === 'hard' ? 'badge-hard' : (item.type === 'synergy' ? 'badge-soft' : 'badge-soft');
-        let cardClass = item.type === 'hard' ? 'hard' : (item.type === 'synergy' ? 'synergy' : 'soft');
-        if (item.type === 'synergy') { badgeClass = 'badge-soft'; cardClass = 'soft'; item.type = 'aliado'; } // Fix visual para sinergias
-        
-        const apiName = getApiName(item.name);
-        const fallbackColor = item.role === 'tank' || item.role === 'tanque' ? '3b82f6' : (item.role === 'damage' || item.role === 'dps' ? 'ef4444' : '10b981');
-        const fallbackSrc = `https://api.dicebear.com/7.x/initials/svg?seed=${item.name}&backgroundColor=${fallbackColor}&textColor=ffffff`;
-        const imgSrc = apiPortraits[apiName] || fallbackSrc;
+      if(!list || list.length === 0) {
+        const emptyMsg = '<div class="empty-state">No hay datos en esta categoría.</div>';
+        tankBox.innerHTML = emptyMsg; dpsBox.innerHTML = emptyMsg; supportBox.innerHTML = emptyMsg;
+        return;
+      }
 
+      list.forEach(item => {
+        const badgeClass = item.type === 'hard' ? 'badge-hard' : 'badge-soft';
+        const cardClass = item.type === 'hard' ? 'hard' : 'soft';
+        
         const cardHTML = `
-          <div class="counter-item ${cardClass}" onclick="handleHeroClick('${item.name}')" style="cursor:pointer;" title="Clic para ver">
+          <div class="counter-item ${cardClass}" onclick="selectHero('${item.name}')">
             <div class="counter-header">
-              <div style="display:flex; align-items:center; gap:10px;">
-                <img src="${imgSrc}" 
-                     onerror="this.onerror=null; this.src='${fallbackSrc}';" 
-                     style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;">
-                <span class="counter-name">${item.name}</span>
-              </div>
+              <div class="mini-avatar" style="${getAvatarHTML(item.name)}">${apiImages[item.name] ? '' : getInitials(item.name)}</div>
+              <span class="counter-name">${item.name}</span>
               <span class="counter-badge ${badgeClass}">${item.type}</span>
             </div>
             <div class="counter-reason">${item.reason}</div>
           </div>
         `;
 
-        if (item.role === 'tank' || item.role === 'tanque') tankBox.innerHTML += cardHTML;
+        if (item.role === 'tank') tankBox.innerHTML += cardHTML;
         else if (item.role === 'damage' || item.role === 'dps') dpsBox.innerHTML += cardHTML;
-        else if (item.role === 'support' || item.role === 'apoyo') supportBox.innerHTML += cardHTML;
+        else if (item.role === 'support') supportBox.innerHTML += cardHTML;
       });
 
-      const fallback = `<span style="color:var(--text-muted); font-size:0.9rem;">Sin datos en este rol.</span>`;
-      if(tankBox.innerHTML === '') tankBox.innerHTML = fallback;
-      if(dpsBox.innerHTML === '') dpsBox.innerHTML = fallback;
-      if(supportBox.innerHTML === '') supportBox.innerHTML = fallback;
+      if(tankBox.innerHTML === '') tankBox.innerHTML = '<div class="empty-state">-</div>';
+      if(dpsBox.innerHTML === '') dpsBox.innerHTML = '<div class="empty-state">-</div>';
+      if(supportBox.innerHTML === '') supportBox.innerHTML = '<div class="empty-state">-</div>';
     }
 
     function filterHeroes() {
@@ -835,7 +529,7 @@
       });
     }
 
-    window.onload = init;
+    window.onload = fetchImages;
   </script>
 </body>
 </html>

@@ -80,11 +80,11 @@
     .hero-grid { display: flex; flex-wrap: wrap; gap: 10px; }
     
     .hero-btn {
-      background: #2a3546; border: 2px solid transparent; border-radius: 8px; padding: 12px 15px; cursor: pointer;
-      color: #fff; font-weight: 600; font-size: 0.95rem; transition: all 0.2s; display: flex; align-items: center; justify-content: center; min-width: 120px; flex: 1 1 auto; max-width: 160px;
+      background: #2a3546; border: 2px solid transparent; border-radius: 12px; padding: 0; cursor: pointer;
+      transition: all 0.2s; display: flex; align-items: center; justify-content: center; width: 70px; height: 70px; overflow: hidden;
     }
-    .hero-btn:hover { background: #3d4a5d; transform: translateY(-2px); }
-    .hero-btn.active { border-color: var(--accent-orange); background: #1a2230; color: var(--accent-orange); }
+    .hero-btn:hover { transform: translateY(-4px) scale(1.05); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+    .hero-btn.active { border-color: var(--accent-orange); box-shadow: 0 0 15px rgba(249, 158, 26, 0.5); }
 
     /* NUEVOS ESTILOS: TOGGLES, TABS, STATS Y ANALIZADOR */
     .mode-toggle { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
@@ -433,10 +433,6 @@
         { name: "Junkrat", role: "damage", type: "hard", reason: "Las bombas revientan su débil escudo con suma rapidez desde la lejanía." },
         { name: "Reinhardt", role: "tank", type: "hard", reason: "El martillo de Reinhardt gana cualquier pelea cuerpo a cuerpo contra la maza de Brigitte." }
       ]},
-      "Domina": { role: "Support", counters: [
-        { name: "Tracer", role: "damage", type: "hard", reason: "Extremadamente difícil de golpear. Tracer baila alrededor esquivando todo su CC." },
-        { name: "Ana", role: "support", type: "hard", reason: "Su granada biótica le rompe las pasivas y la facilidad de curarse infligiendo daño." }
-      ]},
       "Illari": { role: "Support", counters: [
         { name: "Sombra", role: "damage", type: "hard", reason: "Va invisible, destruye la torreta pilona de curación fácil, y hackea a Illari." },
         { name: "D.Va", role: "tank", type: "soft", reason: "Se abalanza y se traga el tremendo 'Sol Cautivo' (Ultimate) entero con la matriz." },
@@ -635,6 +631,7 @@
         const btn = document.createElement('button');
         btn.className = `hero-btn ${key === selectedHeroKey && appMode === 'individual' ? 'active' : ''}`;
         btn.dataset.name = key;
+        btn.title = key; /* Muestra el nombre al pasar el ratón */
         btn.onclick = () => handleHeroClick(key);
         
         const apiName = getApiName(key);
@@ -642,12 +639,12 @@
         const fallbackSrc = `https://api.dicebear.com/7.x/initials/svg?seed=${key}&backgroundColor=${fallbackColor}&textColor=ffffff`;
         const imgSrc = apiPortraits[apiName] || fallbackSrc;
         
-        // Se añade la imagen dentro del botón utilizando la API
+        // Se añade solo la imagen, sin el texto
         btn.innerHTML = `
           <img src="${imgSrc}" 
                onerror="this.onerror=null; this.src='${fallbackSrc}';" 
-               style="width: 24px; height: 24px; border-radius: 50%; margin-right: 8px; object-fit: cover; border: 1px solid rgba(255,255,255,0.2);">
-          ${key}
+               alt="${key}"
+               style="width: 100%; height: 100%; object-fit: cover; display: block;">
         `;
 
         if (hData.role === 'Tank') tankBox.appendChild(btn);

@@ -617,6 +617,22 @@
           { name: "Bastion", stars: 3 }, { name: "Torbjörn", stars: 3 }
         ]
       },
+      "Jetpack Cat": { 
+        role: "Support", 
+        counters: [
+          { name: "Widowmaker", stars: 5, reason: "Blanco muy fácil mientras usa su jetpack (es lento/predecible)." },
+          { name: "Soldier: 76", stars: 4, reason: "Daño hitscan constante que derriba su poco HP." },
+          { name: "D.Va", stars: 4, reason: "Matriz anula gran parte de su spam de bombas y puede perseguirlo." },
+          { name: "Sombra", stars: 4, reason: "Hackeo apaga el jetpack, tirándolo al suelo de inmediato." },
+          { name: "Cassidy", stars: 3, reason: "Hitscan preciso contra voladores." },
+          { name: "Echo", stars: 2, reason: "Skill matchup. Batalla aérea." },
+          { name: "Pharah", stars: 2, reason: "Skill matchup. Batalla aérea de proyectiles." }
+        ],
+        strong_against: [
+          { name: "Reinhardt", stars: 4 }, { name: "Junkrat", stars: 4 },
+          { name: "Symmetra", stars: 4 }, { name: "Mei", stars: 3 }
+        ]
+      },
       "Junkrat": { 
         role: "Damage", 
         counters: [
@@ -942,22 +958,6 @@
           { name: "Mercy", stars: 3 }
         ]
       },
-      "Jetpack Cat": { 
-      role: "Support", 
-      counters: [
-         { name: "Widowmaker", stars: 5, reason: "Blanco muy fácil mientras usa su jetpack (es lento/predecible)." },
-         { name: "Soldier: 76", stars: 4, reason: "Daño hitscan constante que derriba su poco HP." },
-         { name: "D.Va", stars: 4, reason: "Matriz anula gran parte de su spam de bombas y puede perseguirlo." },
-         { name: "Sombra", stars: 4, reason: "Hackeo apaga el jetpack, tirándolo al suelo de inmediato." },
-         { name: "Cassidy", stars: 3, reason: "Hitscan preciso contra voladores." },
-         { name: "Echo", stars: 2, reason: "Skill matchup. Batalla aérea." },
-         { name: "Pharah", stars: 2, reason: "Skill matchup. Batalla aérea de proyectiles." }
-        ],
-        strong_against: [
-          { name: "Reinhardt", stars: 4 }, { name: "Junkrat", stars: 4 },
-          { name: "Symmetra", stars: 4 }, { name: "Mei", stars: 3 }
-        ]
-      },
       "Juno": { 
         role: "Support", 
         counters: [
@@ -1104,7 +1104,13 @@
 
     function getHeroApiFormat(name) {
       if(!name) return '';
-      return name.toLowerCase().replace(/:\s/g, '-').replace(/\./g, '').replace(/\s/g, '-');
+      return name
+        .normalize("NFD")                  // Separa la letra del acento
+        .replace(/[\u0300-\u036f]/g, "")   // Borra los acentos/diéresis
+        .toLowerCase()                     // Pasa a minúsculas
+        .replace(/:\s/g, '-')              // Cambia "Soldier: 76" a "soldier-76"
+        .replace(/\./g, '')                // Quita el punto de "D.Va"
+        .replace(/\s/g, '-');              // Cambia espacios por guiones (Wrecking Ball)
     }
 
     function getAvatarUrl(name) {

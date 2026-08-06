@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Overwatch 2 - Counter Picker Completo</title>
+  <title>Overwatch - Counter Picker Completo</title>
   
   <!-- FontAwesome para los iconos profesionales -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -19,12 +19,11 @@
       --dps-color: #ef4444;
       --support-color: #10b981;
       --border-radius: 12px;
-      /* Nuevos colores para las categorías de counter */
-      --color-hard: #ef4444; /* Rojo para Hard Counter */
-      --color-favorable: #f97316; /* Naranja para Favorable */
-      --color-light: #eab308; /* Amarillo para Ligera */
-      --color-skill: #3b82f6; /* Azul para Skill Matchup */
-      --color-disadvantage: #9ca3af; /* Gris para Desventaja */
+      --color-hard: #ef4444; 
+      --color-favorable: #f97316; 
+      --color-light: #eab308; 
+      --color-skill: #3b82f6; 
+      --color-disadvantage: #9ca3af; 
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
@@ -60,7 +59,7 @@
     .role-damage { color: var(--dps-color); }
     .role-support { color: var(--support-color); }
 
-    /* STATS & PERKS */
+    /* STATS */
     .stats-container { display: flex; gap: 10px; margin-top: 20px; width: 100%; justify-content: center; }
     .stat-badge { display: flex; flex-direction: column; align-items: center; background: #141a24; padding: 8px 12px; border-radius: 8px; flex: 1; border: 1px solid #2d3848;}
     .stat-badge i { font-size: 1.2rem; margin-bottom: 5px; }
@@ -68,13 +67,6 @@
     .stat-hp i { color: #10b981; }
     .stat-armor i { color: #f59e0b; }
     .stat-shield i { color: #3b82f6; }
-
-    .perks-container { width: 100%; margin-top: 20px; background: #141a24; border-radius: 8px; padding: 15px; border: 1px solid #2d3848; display: none; }
-    .perks-title { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 10px; font-weight: bold; }
-    .perks-grid { display: flex; gap: 10px; justify-content: center; }
-    .perk-box { flex: 1; background: #2a3546; padding: 10px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; color: #fff; line-height: 1.2;}
-    .perk-major { border-left: 3px solid var(--accent-orange); }
-    .perk-minor { border-left: 3px solid #9aa8b9; }
 
     /* TABS & COUNTERS */
     .right-panel { display: flex; flex-direction: column; gap: 15px; }
@@ -97,7 +89,6 @@
     .counter-item { background: #141a24; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 6px; border-left: 4px solid transparent; cursor: pointer; transition: transform 0.2s; }
     .counter-item:hover { transform: translateX(5px); }
     
-    /* Clases de colores para las estrellas/ventajas */
     .counter-item.star-5 { border-left-color: var(--color-hard); }
     .counter-item.star-4 { border-left-color: var(--color-favorable); }
     .counter-item.star-3 { border-left-color: var(--color-light); }
@@ -177,19 +168,11 @@
           <div class="stat-badge stat-armor"><i class="fa-solid fa-shield-halved"></i> <span id="statArmor">-</span></div>
           <div class="stat-badge stat-shield"><i class="fa-solid fa-circle-notch"></i> <span id="statShield">-</span></div>
         </div>
-
-        <div class="perks-container" id="perksContainer">
-          <div class="perks-title"><i class="fa-solid fa-star"></i> Perks Recomendados</div>
-          <div class="perks-grid">
-            <div class="perk-box perk-minor" id="perkMinor">-</div>
-            <div class="perk-box perk-major" id="perkMajor">-</div>
-          </div>
-        </div>
       </div>
 
       <div class="right-panel">
         <div class="tabs-header">
-          <button class="tab-btn active" onclick="switchTab('counters')"><i class="fa-solid fa-crosshairs"></i> Le Hacen Counter</button>
+          <button class="tab-btn active" onclick="switchTab('counters')"><i class="fa-solid fa-crosshairs"></i> Counters</button>
           <button class="tab-btn" onclick="switchTab('strong')"><i class="fa-solid fa-fire"></i> Fuerte contra</button>
         </div>
 
@@ -615,22 +598,6 @@
           { name: "Bastion", stars: 3 }, { name: "Torbjörn", stars: 3 }
         ]
       },
-      "Jetpack Cat": { 
-        role: "Support", 
-        counters: [
-          { name: "Widowmaker", stars: 5, reason: "Blanco muy fácil mientras usa su jetpack (es lento/predecible)." },
-          { name: "Soldier: 76", stars: 4, reason: "Daño hitscan constante que derriba su poco HP." },
-          { name: "D.Va", stars: 4, reason: "Matriz anula gran parte de su spam de bombas y puede perseguirlo." },
-          { name: "Sombra", stars: 4, reason: "Hackeo apaga el jetpack, tirándolo al suelo de inmediato." },
-          { name: "Cassidy", stars: 3, reason: "Hitscan preciso contra voladores." },
-          { name: "Echo", stars: 2, reason: "Skill matchup. Batalla aérea." },
-          { name: "Pharah", stars: 2, reason: "Skill matchup. Batalla aérea de proyectiles." }
-        ],
-        strong_against: [
-          { name: "Reinhardt", stars: 4 }, { name: "Junkrat", stars: 4 },
-          { name: "Symmetra", stars: 4 }, { name: "Mei", stars: 3 }
-        ]
-      },
       "Junkrat": { 
         role: "Damage", 
         counters: [
@@ -956,6 +923,22 @@
           { name: "Mercy", stars: 3 }
         ]
       },
+      "Jetpack Cat": { 
+        role: "Support", 
+        counters: [
+          { name: "Widowmaker", stars: 5, reason: "Blanco muy fácil mientras usa su jetpack (es lento/predecible)." },
+          { name: "Soldier: 76", stars: 4, reason: "Daño hitscan constante que derriba su poco HP." },
+          { name: "D.Va", stars: 4, reason: "Matriz anula gran parte de su spam de bombas." },
+          { name: "Sombra", stars: 4, reason: "Hackeo apaga el jetpack, tirándolo al suelo." },
+          { name: "Cassidy", stars: 3, reason: "Hitscan preciso." },
+          { name: "Echo", stars: 2, reason: "Skill matchup." },
+          { name: "Pharah", stars: 2, reason: "Skill matchup." }
+        ],
+        strong_against: [
+          { name: "Reinhardt", stars: 4 }, { name: "Junkrat", stars: 4 },
+          { name: "Symmetra", stars: 4 }, { name: "Mei", stars: 3 }
+        ]
+      },
       "Juno": { 
         role: "Support", 
         counters: [
@@ -1026,9 +1009,9 @@
       "Mizuki": { 
         role: "Support", 
         counters: [
-          { name: "Sombra", stars: 5, reason: "Hackeo apaga sus escudos tácticos pasivos dejándola muy expuesta." },
-          { name: "Winston", stars: 4, reason: "Arma ignora sus evasiones en el suelo y aísla su protección." },
-          { name: "Pharah", stars: 3, reason: "Spam de cohetes destruye sus proyecciones con facilidad." },
+          { name: "Sombra", stars: 4, reason: "Hackeo apaga sus escudos tácticos pasivos." },
+          { name: "Winston", stars: 4, reason: "Arma ignora evasiones en el suelo." },
+          { name: "Pharah", stars: 3, reason: "Spam de cohetes destruye sus proyecciones." },
           { name: "Tracer", stars: 2, reason: "Skill matchup." }
         ],
         strong_against: [
@@ -1192,15 +1175,6 @@
         document.getElementById('statArmor').innerText = data.role === 'Tank' ? '100' : '0';
         document.getElementById('statShield').innerText = "0";
       }
-
-      const pContainer = document.getElementById('perksContainer');
-      if (data.perks) {
-        pContainer.style.display = 'block';
-        document.getElementById('perkMinor').innerText = data.perks.minor;
-        document.getElementById('perkMajor').innerText = data.perks.major;
-      } else {
-        pContainer.style.display = 'none';
-      }
     }
 
     function switchTab(tabId) {
@@ -1290,7 +1264,7 @@
           const enemyData = HEROES_DB[item.name];
           if(!enemyData) return;
           
-          const cardHTML = createCardHTML(item.name, item.stars, item.reason); // reason is optional here
+          const cardHTML = createCardHTML(item.name, item.stars, item.reason);
           
           if (enemyData.role === 'Tank') tankBox.innerHTML += cardHTML;
           else if (enemyData.role === 'Damage') dpsBox.innerHTML += cardHTML;
